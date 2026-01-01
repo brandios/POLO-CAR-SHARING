@@ -3,186 +3,317 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VW Polo Car-Sharing</title>
+    <title>VW Polo Car-Sharing | Anna & Heiko</title>
     <style>
-        /* CSS von Anna & Heiko */
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --anna: #e74c3c;
+            --heiko: #3498db;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; min-height: 100vh; }
-        .container { max-width: 1400px; margin: 0 auto; }
-        .header { text-align: center; color: white; margin-bottom: 30px; }
-        .dashboard { background: white; border-radius: 20px; padding: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); margin-bottom: 30px; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .stat-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 15px; }
-        .stat-card .value { font-size: 2em; font-weight: bold; }
-        .balance-section { background: #f8f9fa; padding: 25px; border-radius: 15px; margin-bottom: 30px; }
-        .balance-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
-        .balance-card { background: white; padding: 20px; border-radius: 10px; border-left: 5px solid; }
-        .balance-card.anna { border-left-color: #e74c3c; }
-        .balance-card.heiko { border-left-color: #3498db; }
-        .chart-container { background: white; padding: 20px; border-radius: 15px; margin-bottom: 30px; }
-        .chart { height: 300px; display: flex; align-items: flex-end; justify-content: space-around; gap: 40px; padding: 20px; }
-        .bar-container { flex: 1; display: flex; flex-direction: column; align-items: center; }
-        .bar { width: 100%; max-width: 150px; border-radius: 10px 10px 0 0; position: relative; }
-        .bar.anna { background: #e74c3c; }
-        .bar.heiko { background: #3498db; }
-        .section { background: white; border-radius: 15px; padding: 25px; margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e0e0e0; }
-        .add-btn { background: #667eea; color: white; border: none; padding: 12px 30px; border-radius: 25px; cursor: pointer; }
-        .input-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 10px; }
-        input, select { padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; }
-        .debt-alert { background: #fff3cd; border-left: 5px solid #ffc107; padding: 20px; margin-top: 20px; border-radius: 10px; }
+        
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); 
+            padding: 15px; 
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        .header { text-align: center; color: white; margin-bottom: 25px; }
+        .header h1 { font-size: 1.8rem; margin-bottom: 5px; }
+        #syncStatus { font-size: 0.9rem; opacity: 0.9; }
+
+        .dashboard { 
+            background: white; border-radius: 20px; padding: 20px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2); margin-bottom: 25px; 
+        }
+
+        .stats-grid { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
+            gap: 15px; margin-bottom: 25px; 
+        }
+
+        .stat-card { 
+            background: #f8f9fa; padding: 15px; border-radius: 12px; 
+            border-bottom: 4px solid var(--primary); 
+        }
+        .stat-card h3 { font-size: 0.75rem; text-transform: uppercase; color: #666; }
+        .stat-card .value { font-size: 1.2rem; font-weight: bold; margin-top: 5px; }
+
+        .balance-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .balance-card { padding: 15px; border-radius: 12px; border-left: 6px solid; background: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .balance-card.anna { border-left-color: var(--anna); }
+        .balance-card.heiko { border-left-color: var(--heiko); }
+        .amount { font-size: 1.3rem; font-weight: bold; margin: 5px 0; }
+        
+        /* Scrollbare Tabellen */
+        .table-container { 
+            width: 100%; overflow-x: auto; 
+            background: white; border-radius: 12px; 
+            margin-top: 10px; -webkit-overflow-scrolling: touch;
+        }
+
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        th { background: #f1f1f1; padding: 12px; text-align: left; font-size: 0.85rem; }
+        td { padding: 12px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+
+        .section { background: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .section h2 { font-size: 1.1rem; margin-bottom: 15px; border-bottom: 2px solid #eee; padding-bottom: 5px; }
+
+        .input-row { 
+            display: flex; flex-wrap: wrap; gap: 10px; 
+            background: #f9f9f9; padding: 15px; border-radius: 10px; margin-top: 15px;
+        }
+        input, select { flex: 1; min-width: 120px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
+        
+        .add-btn { 
+            background: var(--primary); color: white; border: none; 
+            padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%;
+        }
+
+        .bar-chart { display: flex; height: 200px; align-items: flex-end; gap: 20px; margin-top: 20px; padding: 10px; border-bottom: 2px solid #eee; }
+        .bar-wrapper { flex: 1; display: flex; flex-direction: column; align-items: center; }
+        .bar { width: 100%; border-radius: 5px 5px 0 0; transition: height 0.5s ease; position: relative; }
+        .bar-val { position: absolute; top: -25px; width: 100%; text-align: center; font-weight: bold; font-size: 0.8rem; }
+
+        .debt-alert { background: #fff3cd; border-left: 5px solid #ffc107; padding: 15px; margin-top: 15px; border-radius: 8px; font-weight: bold; }
+        
+        .del-btn { background: none; border: none; cursor: pointer; font-size: 1.1rem; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🚗 VW Polo Car-Sharing</h1>
-            <p id="syncStatus">☁️ Verbinde mit Firebase...</p>
-        </div>
-        
-        <div class="dashboard">
-            <div class="stats-grid">
-                <div class="stat-card"><h3>KM-Stand</h3><div class="value" id="currentKm">-</div></div>
-                <div class="stat-card"><h3>Kosten</h3><div class="value" id="totalCosts">0,00 €</div></div>
-                <div class="stat-card"><h3>Gesamt km</h3><div class="value" id="totalKm">-</div></div>
-            </div>
-            
-            <div class="balance-section">
-                <h2>💰 Salden</h2>
-                <div class="balance-cards">
-                    <div class="balance-card anna"><h3>Anna</h3><div class="amount" id="annaBalance">0,00 €</div><p id="annaKm">0 km</p></div>
-                    <div class="balance-card heiko"><h3>Heiko</h3><div class="amount" id="heikoBalance">0,00 €</div><p id="heikoKm">0 km</p></div>
-                </div>
-                <div class="debt-alert" id="debtAlert" style="display: none;"><h3 id="debtMessage"></h3></div>
-            </div>
 
-            <div class="chart-container">
-                <div class="chart">
-                    <div class="bar-container"><div class="bar anna" id="annaBar" style="height: 0px;"><div id="annaBarValue" style="text-align:center; color:white;">0%</div></div><div>Anna</div></div>
-                    <div class="bar-container"><div class="bar heiko" id="heikoBar" style="height: 0px;"><div id="heikoBarValue" style="text-align:center; color:white;">0%</div></div><div>Heiko</div></div>
-                </div>
+<div class="container">
+    <div class="header">
+        <h1>🚗 Polo Car-Sharing</h1>
+        <div id="syncStatus">⏳ Verbinde mit Cloud...</div>
+    </div>
+
+    <div class="dashboard">
+        <div class="stats-grid">
+            <div class="stat-card"><h3>Aktuell</h3><div class="value" id="currentKm">161.607</div></div>
+            <div class="stat-card"><h3>Gesamt KM</h3><div class="value" id="totalKm">0</div></div>
+            <div class="stat-card"><h3>Kosten Ø</h3><div class="value" id="totalCosts">0,00 €</div></div>
+        </div>
+
+        <div class="balance-cards">
+            <div class="balance-card anna">
+                <strong>Anna</strong>
+                <div class="amount" id="annaBalance">0,00 €</div>
+                <div id="annaKmInfo" style="font-size: 0.8rem; color: #666;">0 km (0%)</div>
+            </div>
+            <div class="balance-card heiko">
+                <strong>Heiko</strong>
+                <div class="amount" id="heikoBalance">0,00 €</div>
+                <div id="heikoKmInfo" style="font-size: 0.8rem; color: #666;">0 km (0%)</div>
             </div>
         </div>
-        
-        <div class="section">
-            <h2>🔄 Kilometerstände</h2>
-            <table id="kmTable"><thead><tr><th>Datum</th><th>KM</th><th>Fahrer</th><th>Gefahren</th><th>Aktionen</th></tr></thead><tbody id="kmTableBody"></tbody></table>
-            <div class="input-row"><input type="date" id="kmDate"><input type="number" id="kmStand" placeholder="KM-Stand"><select id="kmDriver"><option value="Anna">Anna</option><option value="Heiko">Heiko</option></select><button class="add-btn" onclick="addKmEntry()">+ Hinzufügen</button></div>
-        </div>
-        
-        <div class="section">
-            <h2>💶 Kosten</h2>
-            <table id="costTable"><thead><tr><th>Datum</th><th>Was?</th><th>Betrag</th><th>Bezahlt</th><th>Aktionen</th></tr></thead><tbody id="costTableBody"></tbody></table>
-            <div class="input-row"><input type="date" id="costDate"><input type="text" id="costDesc" placeholder="Beschreibung"><input type="number" id="costAmount" placeholder="€"><select id="costPaidBy"><option value="Anna">Anna</option><option value="Heiko">Heiko</option></select><button class="add-btn" onclick="addCostEntry()">+ Hinzufügen</button></div>
+
+        <div id="debtAlert" class="debt-alert" style="display:none;"></div>
+
+        <div class="bar-chart">
+            <div class="bar-wrapper"><div id="annaBar" class="bar" style="background:var(--anna); height:0%"><span class="bar-val" id="annaBarLabel">0%</span></div><span>Anna</span></div>
+            <div class="bar-wrapper"><div id="heikoBar" class="bar" style="background:var(--heiko); height:0%"><span class="bar-val" id="heikoBarLabel">0%</span></div><span>Heiko</span></div>
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    <div class="section">
+        <h2>🔄 Kilometerstände</h2>
+        <div class="table-container">
+            <table>
+                <thead><tr><th>Datum</th><th>Stand</th><th>Fahrer</th><th>Gefahren</th><th></th></tr></thead>
+                <tbody id="kmTableBody"></tbody>
+            </table>
+        </div>
+        <div class="input-row">
+            <input type="date" id="kmDate">
+            <input type="number" id="kmInput" placeholder="KM-Stand">
+            <select id="kmDriver"><option value="Anna">Anna</option><option value="Heiko">Heiko</option></select>
+            <button class="add-btn" id="btnKm">Hinzufügen</button>
+        </div>
+    </div>
 
-        // !!! HIER DEINE DATEN AUS FIREBASE SCHRITT 1 EINSETZEN !!!
-        const firebaseConfig = {
+    <div class="section">
+        <h2>💶 Kosten</h2>
+        <div class="table-container">
+            <table>
+                <thead><tr><th>Datum</th><th>Beschreibung</th><th>Betrag</th><th>Bezahlt</th><th></th></tr></thead>
+                <tbody id="costTableBody"></tbody>
+            </table>
+        </div>
+        <div class="input-row">
+            <input type="date" id="costDate">
+            <input type="text" id="costDesc" placeholder="z.B. Tanken">
+            <input type="number" id="costAmount" placeholder="Betrag €">
+            <select id="costPaidBy"><option value="Anna">Anna</option><option value="Heiko">Heiko</option></select>
+            <button class="add-btn" id="btnCost">Hinzufügen</button>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    // ##########################################################
+    // HIER DEINE FIREBASE DATEN EINSETZEN
+    const firebaseConfig = {
   apiKey: "AIzaSyDkfyKLQ1cI9sPVjxdnguoT95fDcHkUIMM",
   authDomain: "polo-car-sharing-02.firebaseapp.com",
   databaseURL: "https://polo-car-sharing-02-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "polo-car-sharing-02"
+  projectId: "polo-car-sharing-02",
   storageBucket: "polo-car-sharing-02.firebasestorage.app",
   messagingSenderId: "638073894218",
   appId: "1:638073894218:web:03834fae3d54338cc67db3"
-        };
+    };
+    // ##########################################################
 
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        const dataRef = ref(db, 'polo_data_v2');
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const dataRef = ref(db, 'polo_share_v3');
 
-        window.kmEntries = [{ date: '2025-11-01', km: 161607, driver: 'Heiko', driven: 0 }];
-        window.costEntries = [];
+    const START_KM = 161607;
+    let kmEntries = [{ date: '2025-11-01', km: START_KM, driver: 'Heiko', driven: 0 }];
+    let costEntries = [];
 
-        window.saveToCloud = function() {
-            set(dataRef, { kmEntries: window.kmEntries, costEntries: window.costEntries });
-        };
+    // Cloud-Daten laden
+    onValue(dataRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            kmEntries = data.kmEntries || kmEntries;
+            costEntries = data.costEntries || [];
+        }
+        document.getElementById('syncStatus').innerHTML = "✅ Live synchronisiert";
+        render();
+    }, (error) => {
+        document.getElementById('syncStatus').innerHTML = "❌ Fehler: " + error.message;
+    });
 
-        onValue(dataRef, (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                window.kmEntries = data.kmEntries || window.kmEntries;
-                window.costEntries = data.costEntries || [];
-                document.getElementById('syncStatus').textContent = "✅ Daten synchronisiert";
-                updateKmTable(); updateCostTable(); updateDashboard();
+    function save() {
+        set(dataRef, { kmEntries, costEntries });
+    }
+
+    window.addKmEntry = () => {
+        const date = document.getElementById('kmDate').value;
+        const km = parseInt(document.getElementById('kmInput').value);
+        const driver = document.getElementById('kmDriver').value;
+        
+        if (!date || !km || km <= kmEntries[kmEntries.length-1].km) {
+            alert("KM-Stand muss höher sein als der letzte!");
+            return;
+        }
+
+        const driven = km - kmEntries[kmEntries.length-1].km;
+        kmEntries.push({ date, km, driver, driven });
+        save();
+        document.getElementById('kmInput').value = "";
+    };
+
+    window.addCostEntry = () => {
+        const date = document.getElementById('costDate').value;
+        const desc = document.getElementById('costDesc').value;
+        const amount = parseFloat(document.getElementById('costAmount').value);
+        const paidBy = document.getElementById('costPaidBy').value;
+
+        if (!date || !amount) return;
+
+        costEntries.push({ date, desc, amount, paidBy });
+        save();
+        document.getElementById('costAmount').value = "";
+        document.getElementById('costDesc').value = "";
+    };
+
+    window.deleteKm = (i) => {
+        if (i === 0) return; // Startpunkt niemals löschen
+        if (confirm("Löschen?")) {
+            kmEntries.splice(i, 1);
+            // Gefahrene KM für alle folgenden neu berechnen
+            for (let j = 1; j < kmEntries.length; j++) {
+                kmEntries[j].driven = kmEntries[j].km - kmEntries[j-1].km;
             }
-        });
+            save();
+        }
+    };
 
-        window.addKmEntry = function() {
-            const date = document.getElementById('kmDate').value;
-            const km = parseInt(document.getElementById('kmStand').value);
-            const driver = document.getElementById('kmDriver').value;
-            if(!date || !km) return alert("Bitte km und Datum prüfen!");
-            const driven = km - window.kmEntries[window.kmEntries.length-1].km;
-            window.kmEntries.push({ date, km, driver, driven });
-            window.saveToCloud();
-        };
+    window.deleteCost = (i) => {
+        if (confirm("Löschen?")) { costEntries.splice(i, 1); save(); }
+    };
 
-        window.addCostEntry = function() {
-            const date = document.getElementById('costDate').value;
-            const desc = document.getElementById('costDesc').value;
-            const amount = parseFloat(document.getElementById('costAmount').value);
-            const paidBy = document.getElementById('costPaidBy').value;
-            if(!date || !amount) return alert("Bitte Betrag prüfen!");
-            window.costEntries.push({ date, desc, amount, paidBy });
-            window.saveToCloud();
-        };
+    function render() {
+        const totalDriven = kmEntries[kmEntries.length-1].km - START_KM;
+        let aKm = 0, hKm = 0;
 
-        window.deleteKmEntry = function(i) { if(i>0 && confirm("Löschen?")) { window.kmEntries.splice(i,1); window.saveToCloud(); } };
-        window.deleteCostEntry = function(i) { if(confirm("Löschen?")) { window.costEntries.splice(i,1); window.saveToCloud(); } };
-
-        function updateKmTable() {
-            document.getElementById('kmTableBody').innerHTML = window.kmEntries.map((e, i) => 
-                `<tr><td>${e.date}</td><td>${e.km}</td><td>${e.driver}</td><td>${i==0?'-':e.driven+' km'}</td><td>${i==0?'-':`<button onclick="deleteKmEntry(${i})">🗑️</button>`}</td></tr>`
-            ).join('');
+        // Wer hat die Strecke zwischen den Wechseln gefahren?
+        // Es gilt immer der Fahrer, der VOR dem Wechsel am Steuer saß.
+        for (let i = 1; i < kmEntries.length; i++) {
+            if (kmEntries[i-1].driver === 'Anna') aKm += kmEntries[i].driven;
+            else hKm += kmEntries[i].driven;
         }
 
-        function updateCostTable() {
-            document.getElementById('costTableBody').innerHTML = window.costEntries.map((c, i) => 
-                `<tr><td>${c.date}</td><td>${c.desc}</td><td>${c.amount.toFixed(2)}€</td><td>${c.paidBy}</td><td><button onclick="deleteCostEntry(${i})">🗑️</button></td></tr>`
-            ).join('');
-        }
+        const aP = totalDriven > 0 ? aKm / totalDriven : 0;
+        const hP = totalDriven > 0 ? hKm / totalDriven : 1;
 
-        function updateDashboard() {
-            const totalKm = window.kmEntries[window.kmEntries.length-1].km - 161607;
-            let aKm = 0, hKm = 0;
-            for(let i=1; i<window.kmEntries.length; i++) {
-                if(window.kmEntries[i-1].driver === 'Anna') aKm += window.kmEntries[i].driven;
-                else hKm += window.kmEntries[i].driven;
-            }
-            const aP = totalKm ? aKm/totalKm : 0, hP = totalKm ? hKm/totalKm : 1;
-            const totalCosts = window.costEntries.reduce((sum, c) => sum + c.amount, 0);
-            const aPaid = window.costEntries.filter(c => c.paidBy === 'Anna').reduce((sum, c) => sum + c.amount, 0);
-            const hPaid = window.costEntries.filter(c => c.paidBy === 'Heiko').reduce((sum, c) => sum + c.amount, 0);
-            
-            document.getElementById('currentKm').textContent = window.kmEntries[window.kmEntries.length-1].km;
-            document.getElementById('totalCosts').textContent = totalCosts.toFixed(2) + " €";
-            document.getElementById('totalKm').textContent = totalKm + " km";
-            document.getElementById('annaBalance').textContent = (totalCosts * aP).toFixed(2) + " €";
-            document.getElementById('heikoBalance').textContent = (totalCosts * hP).toFixed(2) + " €";
-            document.getElementById('annaKm').textContent = aKm + " km (" + (aP*100).toFixed(0) + "%)";
-            document.getElementById('heikoKm').textContent = hKm + " km (" + (hP*100).toFixed(0) + "%)";
-            document.getElementById('annaBar').style.height = (aP * 250) + "px";
-            document.getElementById('heikoBar').style.height = (hP * 250) + "px";
-            document.getElementById('annaBarValue').textContent = (aP*100).toFixed(0) + "%";
-            document.getElementById('heikoBarValue').textContent = (hP*100).toFixed(0) + "%";
+        const totalCostSum = costEntries.reduce((s, c) => s + c.amount, 0);
+        const aPaid = costEntries.filter(c => c.paidBy === 'Anna').reduce((s, c) => s + c.amount, 0);
+        const hPaid = costEntries.filter(c => c.paidBy === 'Heiko').reduce((s, c) => s + c.amount, 0);
 
-            const diff = aPaid - (totalCosts * aP);
-            if(Math.abs(diff) > 0.1) {
-                document.getElementById('debtAlert').style.display = 'block';
-                document.getElementById('debtMessage').textContent = diff > 0 ? `Heiko schuldet Anna ${diff.toFixed(2)}€` : `Anna schuldet Heiko ${Math.abs(diff).toFixed(2)}€`;
-            } else { document.getElementById('debtAlert').style.display = 'none'; }
-        }
+        // UI Updates
+        document.getElementById('currentKm').innerText = kmEntries[kmEntries.length-1].km.toLocaleString();
+        document.getElementById('totalKm').innerText = totalDriven.toLocaleString() + " km";
+        document.getElementById('totalCosts').innerText = totalCostSum.toFixed(2) + " €";
 
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('kmDate').value = today;
-        document.getElementById('costDate').value = today;
-    </script>
+        document.getElementById('annaBalance').innerText = (totalCostSum * aP).toFixed(2) + " €";
+        document.getElementById('heikoBalance').innerText = (totalCostSum * hP).toFixed(2) + " €";
+        document.getElementById('annaKmInfo').innerText = `${aKm} km (${(aP*100).toFixed(1)}%)`;
+        document.getElementById('heikoKmInfo').innerText = `${hKm} km (${(hP*100).toFixed(1)}%)`;
+
+        document.getElementById('annaBar').style.height = (aP * 100) + "%";
+        document.getElementById('heikoBar').style.height = (hP * 100) + "%";
+        document.getElementById('annaBarLabel').innerText = (aP*100).toFixed(0) + "%";
+        document.getElementById('heikoBarLabel').innerText = (hP*100).toFixed(0) + "%";
+
+        // Schulden-Logik
+        const annaSoll = totalCostSum * aP;
+        const diff = aPaid - annaSoll;
+        const alert = document.getElementById('debtAlert');
+        if (Math.abs(diff) > 0.1) {
+            alert.style.display = "block";
+            alert.innerText = diff > 0 ? `Heiko schuldet Anna: ${diff.toFixed(2)} €` : `Anna schuldet Heiko: ${Math.abs(diff).toFixed(2)} €`;
+        } else { alert.style.display = "none"; }
+
+        // Tabellen zeichnen
+        document.getElementById('kmTableBody').innerHTML = kmEntries.map((e, i) => `
+            <tr>
+                <td>${e.date}</td>
+                <td><b>${e.km.toLocaleString()}</b></td>
+                <td>${e.driver}</td>
+                <td>${i === 0 ? 'START' : e.driven + ' km'}</td>
+                <td>${i === 0 ? '' : `<button class="del-btn" onclick="deleteKm(${i})">🗑️</button>`}</td>
+            </tr>
+        `).join('');
+
+        document.getElementById('costTableBody').innerHTML = costEntries.map((c, i) => `
+            <tr>
+                <td>${c.date}</td>
+                <td>${c.desc}</td>
+                <td>${c.amount.toFixed(2)} €</td>
+                <td>${c.paidBy}</td>
+                <td><button class="del-btn" onclick="deleteCost(${i})">🗑️</button></td>
+            </tr>
+        `).join('');
+    }
+
+    // Event Listener für Buttons
+    document.getElementById('btnKm').addEventListener('click', window.addKmEntry);
+    document.getElementById('btnCost').addEventListener('click', window.addCostEntry);
+    document.getElementById('kmDate').value = new Date().toISOString().split('T')[0];
+    document.getElementById('costDate').value = new Date().toISOString().split('T')[0];
+</script>
+
 </body>
 </html>
