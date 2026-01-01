@@ -1,146 +1,188 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
-	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
-	<title></title>
-	<meta name="generator" content="LibreOffice 25.8.3.2 (Windows)"/>
-	<meta name="created" content="2026-01-01T14:24:10.519010300"/>
-	<meta name="changed" content="2026-01-01T14:24:42.323744900"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VW Polo Car-Sharing</title>
+    <style>
+        /* CSS von Anna & Heiko */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; min-height: 100vh; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header { text-align: center; color: white; margin-bottom: 30px; }
+        .dashboard { background: white; border-radius: 20px; padding: 30px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); margin-bottom: 30px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 15px; }
+        .stat-card .value { font-size: 2em; font-weight: bold; }
+        .balance-section { background: #f8f9fa; padding: 25px; border-radius: 15px; margin-bottom: 30px; }
+        .balance-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .balance-card { background: white; padding: 20px; border-radius: 10px; border-left: 5px solid; }
+        .balance-card.anna { border-left-color: #e74c3c; }
+        .balance-card.heiko { border-left-color: #3498db; }
+        .chart-container { background: white; padding: 20px; border-radius: 15px; margin-bottom: 30px; }
+        .chart { height: 300px; display: flex; align-items: flex-end; justify-content: space-around; gap: 40px; padding: 20px; }
+        .bar-container { flex: 1; display: flex; flex-direction: column; align-items: center; }
+        .bar { width: 100%; max-width: 150px; border-radius: 10px 10px 0 0; position: relative; }
+        .bar.anna { background: #e74c3c; }
+        .bar.heiko { background: #3498db; }
+        .section { background: white; border-radius: 15px; padding: 25px; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #e0e0e0; }
+        .add-btn { background: #667eea; color: white; border: none; padding: 12px 30px; border-radius: 25px; cursor: pointer; }
+        .input-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 10px; }
+        input, select { padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; }
+        .debt-alert { background: #fff3cd; border-left: 5px solid #ffc107; padding: 20px; margin-top: 20px; border-radius: 10px; }
+    </style>
 </head>
-<body lang="de-DE" dir="ltr"><p>&lt;!DOCTYPE html&gt;<br/>
-&lt;html
-lang=&quot;de&quot;&gt;<br/>
-&lt;head&gt;<br/>
-    &lt;meta
-charset=&quot;UTF-8&quot;&gt;<br/>
-    &lt;meta name=&quot;viewport&quot;
-content=&quot;width=device-width, initial-scale=1.0&quot;&gt;<br/>
-  
- &lt;title&gt;VW Polo Car-Sharing - Anna &amp; Heiko Sync&lt;/title&gt;<br/>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚗 VW Polo Car-Sharing</h1>
+            <p id="syncStatus">☁️ Verbinde mit Firebase...</p>
+        </div>
+        
+        <div class="dashboard">
+            <div class="stats-grid">
+                <div class="stat-card"><h3>KM-Stand</h3><div class="value" id="currentKm">-</div></div>
+                <div class="stat-card"><h3>Kosten</h3><div class="value" id="totalCosts">0,00 €</div></div>
+                <div class="stat-card"><h3>Gesamt km</h3><div class="value" id="totalKm">-</div></div>
+            </div>
+            
+            <div class="balance-section">
+                <h2>💰 Salden</h2>
+                <div class="balance-cards">
+                    <div class="balance-card anna"><h3>Anna</h3><div class="amount" id="annaBalance">0,00 €</div><p id="annaKm">0 km</p></div>
+                    <div class="balance-card heiko"><h3>Heiko</h3><div class="amount" id="heikoBalance">0,00 €</div><p id="heikoKm">0 km</p></div>
+                </div>
+                <div class="debt-alert" id="debtAlert" style="display: none;"><h3 id="debtMessage"></h3></div>
+            </div>
 
-   &lt;style&gt;<br/>
-        /* Kopiere hier dein komplettes Styling
-aus deiner ersten Nachricht hinein */<br/>
-        * { margin: 0;
-padding: 0; box-sizing: border-box; }<br/>
-        body {
-font-family: sans-serif; background: #667eea; padding: 20px; }<br/>
- 
-      .container { max-width: 1400px; margin: 0 auto; background:
-white; padding: 20px; border-radius: 20px; }<br/>
-        /* ...
-restliches CSS ... */<br/>
-    &lt;/style&gt;<br/>
-&lt;/head&gt;<br/>
-&lt;body&gt;<br/>
+            <div class="chart-container">
+                <div class="chart">
+                    <div class="bar-container"><div class="bar anna" id="annaBar" style="height: 0px;"><div id="annaBarValue" style="text-align:center; color:white;">0%</div></div><div>Anna</div></div>
+                    <div class="bar-container"><div class="bar heiko" id="heikoBar" style="height: 0px;"><div id="heikoBarValue" style="text-align:center; color:white;">0%</div></div><div>Heiko</div></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>🔄 Kilometerstände</h2>
+            <table id="kmTable"><thead><tr><th>Datum</th><th>KM</th><th>Fahrer</th><th>Gefahren</th><th>Aktionen</th></tr></thead><tbody id="kmTableBody"></tbody></table>
+            <div class="input-row"><input type="date" id="kmDate"><input type="number" id="kmStand" placeholder="KM-Stand"><select id="kmDriver"><option value="Anna">Anna</option><option value="Heiko">Heiko</option></select><button class="add-btn" onclick="addKmEntry()">+ Hinzufügen</button></div>
+        </div>
+        
+        <div class="section">
+            <h2>💶 Kosten</h2>
+            <table id="costTable"><thead><tr><th>Datum</th><th>Was?</th><th>Betrag</th><th>Bezahlt</th><th>Aktionen</th></tr></thead><tbody id="costTableBody"></tbody></table>
+            <div class="input-row"><input type="date" id="costDate"><input type="text" id="costDesc" placeholder="Beschreibung"><input type="number" id="costAmount" placeholder="€"><select id="costPaidBy"><option value="Anna">Anna</option><option value="Heiko">Heiko</option></select><button class="add-btn" onclick="addCostEntry()">+ Hinzufügen</button></div>
+        </div>
+    </div>
 
-   &lt;div class=&quot;container&quot;&gt;<br/>
-        &lt;h1&gt;🚗
-VW Polo Car-Sharing (Live Sync)&lt;/h1&gt;<br/>
-        <br/>
-       
-&lt;div id=&quot;status&quot;&gt;Lade Daten aus der Cloud...&lt;/div&gt;<br/>
-<br/>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-       &lt;/div&gt;<br/>
-<br/>
-    &lt;script type=&quot;module&quot;&gt;<br/>
+        // !!! HIER DEINE DATEN AUS FIREBASE SCHRITT 1 EINSETZEN !!!
+        const firebaseConfig = {
+  apiKey: "AIzaSyDkfyKLQ1cI9sPVjxdnguoT95fDcHkUIMM",
+  authDomain: "polo-car-sharing-02.firebaseapp.com",
+  databaseURL: "https://polo-car-sharing-02-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "polo-car-sharing-02"
+  storageBucket: "polo-car-sharing-02.firebasestorage.app",
+  messagingSenderId: "638073894218",
+  appId: "1:638073894218:web:03834fae3d54338cc67db3"
+        };
 
-       import { initializeApp } from
-&quot;https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js&quot;;<br/>
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const dataRef = ref(db, 'polo_data_v2');
 
-       import { getDatabase, ref, set, onValue } from
-&quot;https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js&quot;;<br/>
-<br/>
+        window.kmEntries = [{ date: '2025-11-01', km: 161607, driver: 'Heiko', driven: 0 }];
+        window.costEntries = [];
 
-       // BITTE HIER DEINE DATEN EINTRAGEN<br/>
-        const
-firebaseConfig = {<br/>
-            apiKey: &quot;DEIN_KEY&quot;,<br/>
+        window.saveToCloud = function() {
+            set(dataRef, { kmEntries: window.kmEntries, costEntries: window.costEntries });
+        };
 
-           authDomain: &quot;DEIN_PROJEKT.firebaseapp.com&quot;,<br/>
+        onValue(dataRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                window.kmEntries = data.kmEntries || window.kmEntries;
+                window.costEntries = data.costEntries || [];
+                document.getElementById('syncStatus').textContent = "✅ Daten synchronisiert";
+                updateKmTable(); updateCostTable(); updateDashboard();
+            }
+        });
 
-           databaseURL:
-&quot;https://DEIN_PROJEKT.europe-west1.firebasedatabase.app&quot;,<br/>
+        window.addKmEntry = function() {
+            const date = document.getElementById('kmDate').value;
+            const km = parseInt(document.getElementById('kmStand').value);
+            const driver = document.getElementById('kmDriver').value;
+            if(!date || !km) return alert("Bitte km und Datum prüfen!");
+            const driven = km - window.kmEntries[window.kmEntries.length-1].km;
+            window.kmEntries.push({ date, km, driver, driven });
+            window.saveToCloud();
+        };
 
-           projectId: &quot;DEIN_PROJEKT&quot;,<br/>
-           
-storageBucket: &quot;DEIN_PROJEKT.appspot.com&quot;,<br/>
-           
-appId: &quot;DEINE_ID&quot;<br/>
-        };<br/>
-<br/>
-        const
-app = initializeApp(firebaseConfig);<br/>
-        const db =
-getDatabase(app);<br/>
-        const dataRef = ref(db,
-'polo_data');<br/>
-<br/>
-        // Globale Daten<br/>
-       
-window.kmEntries = [{ date: '2025-11-01', km: 161607, driver:
-'Heiko', driven: 0 }];<br/>
-        window.costEntries = [];<br/>
-<br/>
+        window.addCostEntry = function() {
+            const date = document.getElementById('costDate').value;
+            const desc = document.getElementById('costDesc').value;
+            const amount = parseFloat(document.getElementById('costAmount').value);
+            const paidBy = document.getElementById('costPaidBy').value;
+            if(!date || !amount) return alert("Bitte Betrag prüfen!");
+            window.costEntries.push({ date, desc, amount, paidBy });
+            window.saveToCloud();
+        };
 
-       // Funktion zum Speichern in die Cloud<br/>
-       
-window.saveToCloud = function() {<br/>
-            set(dataRef, {<br/>
+        window.deleteKmEntry = function(i) { if(i>0 && confirm("Löschen?")) { window.kmEntries.splice(i,1); window.saveToCloud(); } };
+        window.deleteCostEntry = function(i) { if(confirm("Löschen?")) { window.costEntries.splice(i,1); window.saveToCloud(); } };
 
-               kmEntries: window.kmEntries,<br/>
-               
-costEntries: window.costEntries<br/>
-            }).then(() =&gt;
-console.log(&quot;Gespeichert!&quot;)).catch(err =&gt; alert(&quot;Fehler
-beim Speichern: &quot; + err));<br/>
-        };<br/>
-<br/>
-        //
-Echtzeit-Laden<br/>
-        onValue(dataRef, (snapshot) =&gt; {<br/>
+        function updateKmTable() {
+            document.getElementById('kmTableBody').innerHTML = window.kmEntries.map((e, i) => 
+                `<tr><td>${e.date}</td><td>${e.km}</td><td>${e.driver}</td><td>${i==0?'-':e.driven+' km'}</td><td>${i==0?'-':`<button onclick="deleteKmEntry(${i})">🗑️</button>`}</td></tr>`
+            ).join('');
+        }
 
-           const data = snapshot.val();<br/>
-            if (data) {<br/>
+        function updateCostTable() {
+            document.getElementById('costTableBody').innerHTML = window.costEntries.map((c, i) => 
+                `<tr><td>${c.date}</td><td>${c.desc}</td><td>${c.amount.toFixed(2)}€</td><td>${c.paidBy}</td><td><button onclick="deleteCostEntry(${i})">🗑️</button></td></tr>`
+            ).join('');
+        }
 
-               window.kmEntries = data.kmEntries ||
-window.kmEntries;<br/>
-                window.costEntries =
-data.costEntries || [];<br/>
-               
-document.getElementById('status').textContent = &quot;✅
-Synchronisiert&quot;;<br/>
-                // Deine
-Anzeige-Funktionen aufrufen<br/>
-                updateKmTable();<br/>
+        function updateDashboard() {
+            const totalKm = window.kmEntries[window.kmEntries.length-1].km - 161607;
+            let aKm = 0, hKm = 0;
+            for(let i=1; i<window.kmEntries.length; i++) {
+                if(window.kmEntries[i-1].driver === 'Anna') aKm += window.kmEntries[i].driven;
+                else hKm += window.kmEntries[i].driven;
+            }
+            const aP = totalKm ? aKm/totalKm : 0, hP = totalKm ? hKm/totalKm : 1;
+            const totalCosts = window.costEntries.reduce((sum, c) => sum + c.amount, 0);
+            const aPaid = window.costEntries.filter(c => c.paidBy === 'Anna').reduce((sum, c) => sum + c.amount, 0);
+            const hPaid = window.costEntries.filter(c => c.paidBy === 'Heiko').reduce((sum, c) => sum + c.amount, 0);
+            
+            document.getElementById('currentKm').textContent = window.kmEntries[window.kmEntries.length-1].km;
+            document.getElementById('totalCosts').textContent = totalCosts.toFixed(2) + " €";
+            document.getElementById('totalKm').textContent = totalKm + " km";
+            document.getElementById('annaBalance').textContent = (totalCosts * aP).toFixed(2) + " €";
+            document.getElementById('heikoBalance').textContent = (totalCosts * hP).toFixed(2) + " €";
+            document.getElementById('annaKm').textContent = aKm + " km (" + (aP*100).toFixed(0) + "%)";
+            document.getElementById('heikoKm').textContent = hKm + " km (" + (hP*100).toFixed(0) + "%)";
+            document.getElementById('annaBar').style.height = (aP * 250) + "px";
+            document.getElementById('heikoBar').style.height = (hP * 250) + "px";
+            document.getElementById('annaBarValue').textContent = (aP*100).toFixed(0) + "%";
+            document.getElementById('heikoBarValue').textContent = (hP*100).toFixed(0) + "%";
 
-               updateCostTable();<br/>
-               
-updateDashboard();<br/>
-            }<br/>
-        });<br/>
-   
-&lt;/script&gt;<br/>
-<br/>
-    &lt;script&gt;<br/>
-        // Deine
-Logik-Funktionen (addKmEntry, etc.) <br/>
-        // WICHTIG: Füge
-am Ende von addKmEntry(), deleteKmEntry(), addCostEntry() <br/>
-     
-  // und deleteCostEntry() einfach saveToCloud(); hinzu!<br/>
-       
-<br/>
-        function addKmEntry() {<br/>
-            // ... dein
-Code ...<br/>
-            // Am Ende:<br/>
-           
-saveToCloud();<br/>
-        }<br/>
-    &lt;/script&gt;<br/>
-&lt;/body&gt;<br/>
-&lt;/html&gt;</p>
+            const diff = aPaid - (totalCosts * aP);
+            if(Math.abs(diff) > 0.1) {
+                document.getElementById('debtAlert').style.display = 'block';
+                document.getElementById('debtMessage').textContent = diff > 0 ? `Heiko schuldet Anna ${diff.toFixed(2)}€` : `Anna schuldet Heiko ${Math.abs(diff).toFixed(2)}€`;
+            } else { document.getElementById('debtAlert').style.display = 'none'; }
+        }
+
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('kmDate').value = today;
+        document.getElementById('costDate').value = today;
+    </script>
 </body>
 </html>
