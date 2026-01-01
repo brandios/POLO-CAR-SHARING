@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Polo Car-Sharing</title>
+    <title>POLO car management</title>
     <style>
         :root { 
             --accent: #e74c3c; /* Anna / Sport-Rot */
@@ -25,22 +25,22 @@
         
         #mainContent { display: none; max-width: 500px; margin: 0 auto; padding-bottom: 40px; }
 
-        /* Header mit korrektem Polo 9N (2005) Bild */
+        /* Header mit generiertem Polo 9N Bild */
         .header-card { position: relative; border-radius: 20px; overflow: hidden; margin-bottom: 20px; height: 180px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); border: 1px solid #333; }
-        .header-img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.8); }
-        .header-text { position: absolute; bottom: 15px; left: 20px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+        .header-img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.85); }
+        .header-text { position: absolute; bottom: 15px; left: 20px; text-shadow: 0 2px 8px rgba(0,0,0,0.9); }
 
         .card { background: var(--card); border-radius: 20px; padding: 18px; margin-bottom: 15px; border: 1px solid #2a2a2a; }
         
-        /* Dashboard */
+        /* Dashboard Stats */
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
         .stat-item { background: var(--input-bg); padding: 12px; border-radius: 12px; text-align: center; border: 1px solid #333; }
         .stat-item small { font-size: 0.65rem; color: #888; text-transform: uppercase; display: block; margin-bottom: 4px; }
         .stat-item div { font-size: 1.1rem; font-weight: bold; color: #fff; }
 
-        /* Verteilungs-Balken */
-        .ratio-bar { height: 12px; background: #333; border-radius: 6px; display: flex; overflow: hidden; margin: 15px 0; border: 1px solid #000; }
-        .bar-part { height: 100%; transition: width 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        /* Kosten-Balken */
+        .ratio-bar { height: 14px; background: #333; border-radius: 7px; display: flex; overflow: hidden; margin: 15px 0; border: 1px solid #000; }
+        .bar-part { height: 100%; transition: width 0.8s ease-out; }
 
         .user-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .user-info { padding: 10px; border-radius: 12px; background: rgba(255,255,255,0.03); }
@@ -49,49 +49,50 @@
         .user-info div { font-size: 1.2rem; font-weight: 900; }
         .user-info small { color: #888; font-size: 0.75rem; }
 
-        /* Tabellen Styling */
-        .scroll-area { overflow-x: auto; margin: 15px 0; border-radius: 12px; border: 1px solid #2a2a2a; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.8rem; min-width: 450px; }
+        /* Tabellen & Scrolling */
+        .scroll-area { overflow-x: auto; margin: 15px 0; border-radius: 12px; border: 1px solid #2a2a2a; -webkit-overflow-scrolling: touch; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.8rem; min-width: 400px; }
         th { background: #252525; padding: 10px; text-align: left; color: #666; font-size: 0.65rem; text-transform: uppercase; }
         td { padding: 12px 10px; text-align: left; border-bottom: 1px solid #2a2a2a; background: #1e1e1e; }
         
-        /* Formulare */
+        /* Eingabefelder */
         .input-group { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
-        input, select { background: var(--input-bg); border: 1px solid #333; color: white; padding: 14px; border-radius: 12px; font-size: 1rem; -webkit-appearance: none; }
+        input, select { background: var(--input-bg); border: 1px solid #333; color: white; padding: 14px; border-radius: 12px; font-size: 1rem; outline: none; }
         input:focus { border-color: #555; }
         button { padding: 14px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 1rem; }
-        button:active { transform: scale(0.96); }
-        .btn-add { background: var(--accent); color: white; margin-top: 5px; box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3); }
-        .btn-settle { background: #f1c40f; color: #000; width: 100%; margin-top: 15px; display: none; box-shadow: 0 4px 10px rgba(241, 196, 15, 0.3); }
+        button:active { transform: scale(0.97); }
+        
+        .btn-add { background: var(--accent); color: white; }
+        .btn-settle { background: #f1c40f; color: #000; width: 100%; margin-top: 15px; display: none; }
         .btn-export { background: transparent; color: #666; border: 1px solid #333; width: 100%; margin-top: 20px; font-size: 0.8rem; }
 
         .debt-banner { background: rgba(241, 196, 15, 0.1); color: #f1c40f; padding: 15px; border-radius: 12px; font-weight: bold; text-align: center; margin-top: 15px; border: 1px solid rgba(241, 196, 15, 0.3); }
-        .sync-info { font-size: 0.6rem; color: #444; text-align: center; margin-top: 20px; text-transform: uppercase; letter-spacing: 1.5px; }
-        .del-btn { color: #e74c3c; font-size: 1.1rem; cursor: pointer; text-align: center; }
+        .sync-info { font-size: 0.6rem; color: #444; text-align: center; margin-top: 25px; text-transform: uppercase; letter-spacing: 1px; }
+        .del-btn { color: #e74c3c; font-size: 1.1rem; cursor: pointer; text-align: center; width: 30px; }
     </style>
 </head>
 <body>
 
 <div id="loginOverlay">
     <div class="login-box">
-        <h2 style="color:white; margin-bottom:20px; letter-spacing: 2px;">POLO 9N LOGIN</h2>
+        <h2 style="color:white; margin-bottom:20px;">POLO SYSTEM</h2>
         <input type="password" id="passInput" placeholder="Passwort">
-        <button onclick="checkPass()" class="btn-add" style="width:100%; margin-top:15px;">STARTEN</button>
+        <button onclick="checkPass()" class="btn-add" style="width:100%; margin-top:15px;">LOGIN</button>
     </div>
 </div>
 
 <div id="mainContent">
     <div class="header-card">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/VW_Polo_9N_rear_20080215.jpg" class="header-img" alt="Schwarzer Polo 9N">
+        <img src="https://generativestatic.com/api/v1/render/polo9n_black_2005.jpg" class="header-img" alt="Schwarzer Polo 9N">
         <div class="header-text">
-            <h1 style="font-weight: 900; letter-spacing: -1px; font-size: 1.7rem; color: white;">POLO 9N3</h1>
-            <p style="font-size: 0.75rem; color: var(--accent); font-weight: bold; text-transform: uppercase;">Management System 2005</p>
+            <h1 style="font-weight: 900; letter-spacing: -0.5px; font-size: 1.8rem; color: white;">POLO car management</h1>
+            <p style="font-size: 0.7rem; color: var(--accent); font-weight: bold; text-transform: uppercase;">Est. 2005 Edition</p>
         </div>
     </div>
 
     <div class="card">
         <div class="stats-grid">
-            <div class="stat-item"><small>Odometer</small><div id="curKm">-</div></div>
+            <div class="stat-item"><small>Aktueller Stand</small><div id="curKm">-</div></div>
             <div class="stat-item"><small>Kosten gesamt</small><div id="totalCosts">0 €</div></div>
         </div>
 
@@ -106,54 +107,54 @@
         </div>
 
         <div id="debtBox" class="debt-banner" style="display:none"></div>
-        <button onclick="settleUp()" class="btn-settle" id="settleBtn">BEZAHLT & RESET</button>
+        <button onclick="settleUp()" class="btn-settle" id="settleBtn">SCHULDEN AUSGLEICHEN</button>
     </div>
 
     <div class="card">
-        <h3 style="font-size: 0.85rem; text-transform: uppercase; color: #666; margin-bottom: 10px;">Fahrten-Protokoll</h3>
+        <h3 style="font-size: 0.8rem; text-transform: uppercase; color: #666; margin-bottom: 10px;">Fahrtenbuch</h3>
         <div class="scroll-area">
             <table>
-                <thead><tr><th>Datum</th><th>Stand</th><th>Fahrer</th><th>Trip</th><th></th></tr></thead>
+                <thead><tr><th>Datum</th><th>KM-Stand</th><th>Fahrer</th><th>Trip</th><th></th></tr></thead>
                 <tbody id="kmBody"></tbody>
             </table>
         </div>
         <div class="input-group">
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                 <input type="date" id="kmDate">
-                <input type="text" id="kmVal" placeholder="Akt. KM" inputmode="decimal">
+                <input type="text" id="kmVal" placeholder="Zählerstand" inputmode="decimal">
             </div>
             <select id="kmDriver"><option value="Anna">Anna</option><option value="Heiko">Heiko</option></select>
-            <button onclick="addKm()" class="btn-add">KM-STAND SPEICHERN</button>
+            <button onclick="addKm()" class="btn-add">KM EINTRAGEN</button>
         </div>
     </div>
 
     <div class="card">
-        <h3 style="font-size: 0.85rem; text-transform: uppercase; color: #666; margin-bottom: 10px;">Kosten (Fixkosten/Rep.)</h3>
+        <h3 style="font-size: 0.8rem; text-transform: uppercase; color: #666; margin-bottom: 10px;">Ausgaben / Fixkosten</h3>
         <div class="scroll-area">
             <table>
-                <thead><tr><th>Datum</th><th>Zweck</th><th>Betrag</th><th>Von</th><th></th></tr></thead>
+                <thead><tr><th>Datum</th><th>Beschreibung</th><th>Betrag</th><th>Von</th><th></th></tr></thead>
                 <tbody id="costBody"></tbody>
             </table>
         </div>
         <div class="input-group">
-            <input type="text" id="costDesc" placeholder="Was wurde bezahlt?">
+            <input type="text" id="costDesc" placeholder="z.B. Tanken, Steuer, Öl">
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                 <input type="text" id="costAmt" placeholder="Betrag €" inputmode="decimal">
                 <select id="costBy"><option value="Anna">Anna</option><option value="Heiko">Heiko</option></select>
             </div>
-            <button onclick="addCost()" class="btn-add">KOSTEN EINTRAGEN</button>
+            <button onclick="addCost()" class="btn-add">AUSGABE SPEICHERN</button>
         </div>
-        <button onclick="exportCSV()" class="btn-export">📊 DATEN FÜR EXCEL EXPORTIEREN</button>
+        <button onclick="exportCSV()" class="btn-export">DATEN-EXPORT (CSV)</button>
     </div>
 
-    <div id="sync" class="sync-info">Lade Cloud-Daten...</div>
+    <div id="sync" class="sync-info">Cloud-Synchronisation aktiv</div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-    // ####### FIREBASE KONFIGURATION #######
+    // ####### HIER FIREBASE DATEN EINSETZEN #######
     const firebaseConfig = {
   apiKey: "AIzaSyDkfyKLQ1cI9sPVjxdnguoT95fDcHkUIMM",
   authDomain: "polo-car-sharing-02.firebaseapp.com",
@@ -174,14 +175,12 @@
         if(document.getElementById('passInput').value.toLowerCase() === "lilu") {
             document.getElementById('loginOverlay').style.display='none';
             document.getElementById('mainContent').style.display='block';
-        } else {
-            alert("Passwort inkorrekt.");
-        }
+        } else alert("Falsches Passwort.");
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-    const dataRef = ref(db, 'polo_carshare_final');
+    const dataRef = ref(db, 'polo_carshare_v9');
 
     onValue(dataRef, snap => {
         const d = snap.val();
@@ -190,7 +189,7 @@
             costEntries = d.costEntries || []; 
         }
         update();
-        document.getElementById('sync').innerText = "Verschlüsselt mit Cloud verbunden";
+        document.getElementById('sync').innerText = "Verschlüsselt und Synchronisiert";
     });
 
     function cleanNum(val) { return parseFloat(val.toString().replace(',', '.')); }
@@ -230,9 +229,7 @@
             currentDebt = Math.abs(diff);
             debtor = diff > 0 ? "Heiko" : "Anna";
             box.innerText = `💰 ${debtor} schuldet ${diff > 0 ? 'Anna' : 'Heiko'} ${currentDebt.toFixed(2)} €`;
-        } else { 
-            box.style.display = btn.style.display = "none"; 
-        }
+        } else { box.style.display = btn.style.display = "none"; }
 
         document.getElementById('kmBody').innerHTML = kmEntries.map((e,i) => `<tr><td>${e.date.split('-').reverse().slice(0,2).join('.')}</td><td>${e.km.toLocaleString()}</td><td>${e.driver}</td><td>${i==0?'-':e.driven}</td><td onclick="delKm(${i})" class="del-btn">✕</td></tr>`).reverse().join('');
         document.getElementById('costBody').innerHTML = costEntries.map((c,i) => `<tr><td>${c.date.split('-').reverse().slice(0,2).join('.')}</td><td>${c.desc}</td><td>${c.amount.toFixed(2)}€</td><td>${c.paidBy}</td><td onclick="delCost(${i})" class="del-btn">✕</td></tr>`).reverse().join('');
@@ -240,7 +237,7 @@
 
     window.addKm = () => {
         const v = Math.round(cleanNum(document.getElementById('kmVal').value));
-        if(!v || v <= kmEntries[kmEntries.length-1].km) return alert("Fehler: Kilometerstand muss höher sein als der letzte Eintrag!");
+        if(!v || v <= kmEntries[kmEntries.length-1].km) return alert("Ungültiger Kilometerstand!");
         kmEntries.push({ date: document.getElementById('kmDate').value, km: v, driver: document.getElementById('kmDriver').value, driven: v - kmEntries[kmEntries.length-1].km });
         set(dataRef, { kmEntries, costEntries });
         document.getElementById('kmVal').value = "";
@@ -249,20 +246,20 @@
     window.addCost = () => {
         const a = cleanNum(document.getElementById('costAmt').value);
         const de = document.getElementById('costDesc').value;
-        if(!a || !de) return alert("Bitte Beschreibung und Betrag eingeben!");
+        if(!a || !de) return alert("Beschreibung & Betrag fehlen!");
         costEntries.push({ date: new Date().toISOString().split('T')[0], desc: de, amount: a, paidBy: document.getElementById('costBy').value });
         set(dataRef, { kmEntries, costEntries });
         document.getElementById('costAmt').value = ""; document.getElementById('costDesc').value = "";
     };
 
     window.settleUp = () => {
-        if(!confirm(`Bist du sicher, dass ${debtor} die Schulden ausgeglichen hat?`)) return;
-        costEntries.push({ date: new Date().toISOString().split('T')[0], desc: "✅ ABRECHNUNG/AUSGLEICH", amount: currentDebt, paidBy: debtor });
+        if(!confirm(`${debtor} hat die ${currentDebt.toFixed(2)}€ ausgeglichen?`)) return;
+        costEntries.push({ date: new Date().toISOString().split('T')[0], desc: "✅ SCHULDENAUSGLEICH", amount: currentDebt, paidBy: debtor });
         set(dataRef, { kmEntries, costEntries });
     };
 
-    window.delKm = (i) => { if(i>0 && confirm("Eintrag wirklich löschen?")) { kmEntries.splice(i,1); set(dataRef, { kmEntries, costEntries }); } };
-    window.delCost = (i) => { if(confirm("Eintrag wirklich löschen?")) { costEntries.splice(i,1); set(dataRef, { kmEntries, costEntries }); } };
+    window.delKm = (i) => { if(i>0 && confirm("Eintrag löschen?")) { kmEntries.splice(i,1); set(dataRef, { kmEntries, costEntries }); } };
+    window.delCost = (i) => { if(confirm("Eintrag löschen?")) { costEntries.splice(i,1); set(dataRef, { kmEntries, costEntries }); } };
     
     window.exportCSV = () => {
         let csv = "ART;DATUM;INFO;WER;WERT\n";
