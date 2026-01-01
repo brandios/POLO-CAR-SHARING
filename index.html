@@ -25,9 +25,9 @@
         
         #mainContent { display: none; max-width: 500px; margin: 0 auto; padding-bottom: 40px; }
 
-        /* Header mit Bild */
+        /* Header mit korrektem Polo 9N Bild */
         .header-card { position: relative; border-radius: 20px; overflow: hidden; margin-bottom: 20px; height: 160px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); border: 1px solid #333; }
-        .header-img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6); }
+        .header-img { width: 100%; height: 100%; object-fit: cover; filter: brightness(0.7); }
         .header-text { position: absolute; bottom: 15px; left: 20px; }
 
         .card { background: var(--card); border-radius: 20px; padding: 18px; margin-bottom: 15px; border: 1px solid #2a2a2a; }
@@ -66,7 +66,7 @@
 
         .debt-banner { background: rgba(241, 196, 15, 0.15); color: #f1c40f; padding: 15px; border-radius: 12px; font-weight: bold; text-align: center; margin-top: 15px; border: 1px solid #f1c40f; }
         .sync-info { font-size: 0.6rem; color: #444; text-align: center; margin-top: 15px; text-transform: uppercase; letter-spacing: 1px; }
-        .del-btn { color: #555; font-size: 1.2rem; }
+        .del-btn { color: #555; font-size: 1.2rem; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -81,10 +81,10 @@
 
 <div id="mainContent">
     <div class="header-card">
-        <img src="https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?q=80&w=1000&auto=format&fit=crop" class="header-img" alt="Polo 9n">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/VW_Polo_IV_front_20081206.jpg/1200px-VW_Polo_IV_front_20081206.jpg" class="header-img" alt="Schwarzer Polo 9N">
         <div class="header-text">
             <h1 style="font-weight: 900; letter-spacing: -1px; font-size: 1.6rem;">POLO 9N3</h1>
-            <p style="font-size: 0.7rem; color: var(--accent); font-weight: bold; text-transform: uppercase;">Car-Sharing Management</p>
+            <p style="font-size: 0.7rem; color: var(--accent); font-weight: bold; text-transform: uppercase;">Black Edition sharing</p>
         </div>
     </div>
 
@@ -119,15 +119,15 @@
         <div class="input-group">
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                 <input type="date" id="kmDate">
-                <input type="text" id="kmVal" placeholder="Zählerstand" inputmode="decimal">
+                <input type="text" id="kmVal" placeholder="Stand" inputmode="decimal">
             </div>
             <select id="kmDriver"><option value="Anna">Anna</option><option value="Heiko">Heiko</option></select>
-            <button onclick="addKm()" class="btn-add">KM EINTRAGEN</button>
+            <button onclick="addKm()" class="btn-add">Eintragen</button>
         </div>
     </div>
 
     <div class="card">
-        <h3 style="font-size: 0.9rem; text-transform: uppercase; color: #888;">Fixkosten & Reparaturen</h3>
+        <h3 style="font-size: 0.9rem; text-transform: uppercase; color: #888;">Kosten & Reparaturen</h3>
         <div class="scroll-area">
             <table>
                 <thead><tr><th>Datum</th><th>Beschreibung</th><th>Betrag</th><th>Von</th><th></th></tr></thead>
@@ -135,24 +135,24 @@
             </table>
         </div>
         <div class="input-group">
-            <input type="text" id="costDesc" placeholder="z.B. TÜV, Steuer, Reifen">
+            <input type="text" id="costDesc" placeholder="Beschreibung">
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                 <input type="text" id="costAmt" placeholder="Betrag €" inputmode="decimal">
                 <select id="costBy"><option value="Anna">Anna</option><option value="Heiko">Heiko</option></select>
             </div>
-            <button onclick="addCost()" class="btn-add">KOSTEN SPEICHERN</button>
+            <button onclick="addCost()" class="btn-add">Speichern</button>
         </div>
-        <button onclick="exportCSV()" class="btn-export">DATEN-EXPORT (CSV)</button>
+        <button onclick="exportCSV()" class="btn-export">Export als CSV</button>
     </div>
 
-    <div id="sync" class="sync-info">System verschlüsselt...</div>
+    <div id="sync" class="sync-info">System aktiv</div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-    // ####### HIER FIREBASE KONFIGURATION EINSETZEN #######
+    // ####### BITTE DEINE FIREBASE DATEN HIER EINTRAGEN #######
     const firebaseConfig = {
   apiKey: "AIzaSyDkfyKLQ1cI9sPVjxdnguoT95fDcHkUIMM",
   authDomain: "polo-car-sharing-02.firebaseapp.com",
@@ -162,7 +162,6 @@
   messagingSenderId: "638073894218",
   appId: "1:638073894218:web:03834fae3d54338cc67db3"
     };
-    // #####################################################
 
     const START_KM = 161607;
     let kmEntries = [{ date: '2025-11-01', km: START_KM, driver: 'Start', driven: 0 }];
@@ -174,12 +173,12 @@
         if(document.getElementById('passInput').value.toLowerCase() === "lilu") {
             document.getElementById('loginOverlay').style.display='none';
             document.getElementById('mainContent').style.display='block';
-        } else alert("Falsches Passwort.");
+        } else alert("Zugriff verweigert.");
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-    const dataRef = ref(db, 'polo_v7_final');
+    const dataRef = ref(db, 'polo_data_final');
 
     onValue(dataRef, snap => {
         const d = snap.val();
@@ -188,7 +187,7 @@
             costEntries = d.costEntries || []; 
         }
         update();
-        document.getElementById('sync').innerText = "LIVE MIT CLOUD VERBUNDEN";
+        document.getElementById('sync').innerText = "Cloud synchronisiert";
     });
 
     function cleanNum(val) { return parseFloat(val.toString().replace(',', '.')); }
@@ -230,13 +229,13 @@
             box.innerText = `💰 ${debtor} schuldet ${diff > 0 ? 'Anna' : 'Heiko'} ${currentDebt.toFixed(2)} €`;
         } else { box.style.display = btn.style.display = "none"; }
 
-        document.getElementById('kmBody').innerHTML = kmEntries.map((e,i) => `<tr><td>${e.date.split('-').reverse().join('.')}</td><td>${e.km.toLocaleString()}</td><td>${e.driver}</td><td>${i==0?'-':e.driven}</td><td onclick="delKm(${i})" class="del-btn">✕</td></tr>`).reverse().join('');
-        document.getElementById('costBody').innerHTML = costEntries.map((c,i) => `<tr><td>${c.date.split('-').reverse().join('.')}</td><td>${c.desc}</td><td>${c.amount.toFixed(2)}€</td><td>${c.paidBy}</td><td onclick="delCost(${i})" class="del-btn">✕</td></tr>`).reverse().join('');
+        document.getElementById('kmBody').innerHTML = kmEntries.map((e,i) => `<tr><td>${e.date.split('-').reverse().slice(0,2).join('.')}</td><td>${e.km.toLocaleString()}</td><td>${e.driver}</td><td>${i==0?'-':e.driven}</td><td onclick="delKm(${i})" class="del-btn">✕</td></tr>`).reverse().join('');
+        document.getElementById('costBody').innerHTML = costEntries.map((c,i) => `<tr><td>${c.date.split('-').reverse().slice(0,2).join('.')}</td><td>${c.desc}</td><td>${c.amount.toFixed(2)}€</td><td>${c.paidBy}</td><td onclick="delCost(${i})" class="del-btn">✕</td></tr>`).reverse().join('');
     }
 
     window.addKm = () => {
         const v = Math.round(cleanNum(document.getElementById('kmVal').value));
-        if(!v || v <= kmEntries[kmEntries.length-1].km) return alert("Fehler: Kilometerstand zu niedrig!");
+        if(!v || v <= kmEntries[kmEntries.length-1].km) return alert("Kilometerstand ungültig!");
         kmEntries.push({ date: document.getElementById('kmDate').value, km: v, driver: document.getElementById('kmDriver').value, driven: v - kmEntries[kmEntries.length-1].km });
         set(dataRef, { kmEntries, costEntries });
         document.getElementById('kmVal').value = "";
@@ -245,14 +244,14 @@
     window.addCost = () => {
         const a = cleanNum(document.getElementById('costAmt').value);
         const de = document.getElementById('costDesc').value;
-        if(!a || !de) return alert("Bitte Beschreibung und Betrag eingeben!");
+        if(!a || !de) return alert("Bitte Betrag und Text eingeben.");
         costEntries.push({ date: new Date().toISOString().split('T')[0], desc: de, amount: a, paidBy: document.getElementById('costBy').value });
         set(dataRef, { kmEntries, costEntries });
         document.getElementById('costAmt').value = ""; document.getElementById('costDesc').value = "";
     };
 
     window.settleUp = () => {
-        if(!confirm(`Bist du sicher, dass ${debtor} die ${currentDebt.toFixed(2)}€ ausgeglichen hat?`)) return;
+        if(!confirm(`Bist du sicher, dass ${debtor} die ${currentDebt.toFixed(2)}€ bar/per PayPal ausgeglichen hat?`)) return;
         costEntries.push({ date: new Date().toISOString().split('T')[0], desc: "✅ SCHULDEN-AUSGLEICH", amount: currentDebt, paidBy: debtor });
         set(dataRef, { kmEntries, costEntries });
     };
